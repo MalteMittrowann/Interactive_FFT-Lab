@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding FFT & IFFT</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>Interactive Fourier Transform</h1>
+        <p>Ein didaktisches Werkzeug zur Visualisierung von Signalverarbeitung</p>
+    </header>
+
+    <div class="main-container">
+        
+        <section class="panel synthesis">
+            <h2>1. Konstruktion (Inverse FFT)</h2>
+            <p class="explanation">
+                Die <strong>Inverse FFT</strong> (bzw. additive Synthese) nimmt einzelne Frequenz-Komponenten und summiert sie auf, um ein komplexes Signal im Zeitbereich zu erzeugen.
+                <br><br>
+                <em>Aufgabe: Fügen Sie Sinuswellen hinzu, um zu sehen, wie sich die Wellenform verändert.</em>
+            </p>
+
+            <div class="controls">
+                <button id="startBtn">Audio Engine Starten</button>
+                
+                <div class="slider-group">
+                    <label>Grundton (Fundamental)</label>
+                    <input type="range" id="osc1" min="0" max="1" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>2. Harmonische (Obertone)</label>
+                    <input type="range" id="osc2" min="0" max="1" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>3. Harmonische</label>
+                    <input type="range" id="osc3" min="0" max="1" step="0.01" value="0">
+                </div>
+                <div class="slider-group">
+                    <label>4. Harmonische</label>
+                    <input type="range" id="osc4" min="0" max="1" step="0.01" value="0">
+                </div>
+            </div>
+        </section>
+
+        <section class="panel visualization">
+            <div class="canvas-container">
+                <h3>Time Domain (Zeitbereich)</h3>
+                <canvas id="timeCanvas"></canvas>
+                <p class="small-desc">Das Ergebnis der Summation. Dies ist, was der Lautsprecher abspielt.</p>
+            </div>
+
+            <div class="canvas-container">
+                <h3>Frequency Domain (Frequenzbereich)</h3>
+                <canvas id="freqCanvas"></canvas>
+                <p class="small-desc">Die <strong>FFT</strong> analysiert das komplexe Signal und zerlegt es zurück in seine "Zutaten" (die Balken).</p>
+            </div>
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Developed for JKU Teaching Demonstration by Malte Mittrowann</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
