@@ -1,6 +1,6 @@
 # Interactive_FFT-Lab
 
-Interactive aducational WebApp for explaining and visualizing the Fourier-Transform und the Inverse Fourier Transform.
+Interactive educational WebApp for explaining and visualizing the Fourier-Transform und the Inverse Fourier Transform.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 

@@ -3,68 +3,325 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Understanding FFT & IFFT</title>
+    <title>Audio Signal Processing Education | JKU Portfolio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <header>
-        <h1>Interactive Fourier Transform</h1>
-        <p>Ein didaktisches Werkzeug zur Visualisierung von Signalverarbeitung</p>
-    </header>
+    <nav>
+        <button id="nav-l1" class="active active-l1" onclick="switchLesson(1)">1. Die Sinuswelle</button>
+        <button id="nav-l2" onclick="switchLesson(2)">2. Signal-Kette</button>
+        <button id="nav-l3" onclick="switchLesson(3)">3. Analog vs. Digital</button>
+        <button id="nav-l4" onclick="switchLesson(4)">4. Euler & Kreis</button>
+        <button id="nav-l5" onclick="switchLesson(5)">5. Komplexe Sinuswellen</button>
+        <button id="nav-l6" onclick="switchLesson(6)">6. Fourier-Synthese</button>
+        <button id="nav-l7" onclick="switchLesson(7)">7. Synthese-Labor</button>
+    </nav>
 
-    <div class="main-container">
-        
-        <section class="panel synthesis">
-            <h2>1. Konstruktion (Inverse FFT)</h2>
-            <p class="explanation">
-                Die <strong>Inverse FFT</strong> (bzw. additive Synthese) nimmt einzelne Frequenz-Komponenten und summiert sie auf, um ein komplexes Signal im Zeitbereich zu erzeugen.
-                <br><br>
-                <em>Aufgabe: Fügen Sie Sinuswellen hinzu, um zu sehen, wie sich die Wellenform verändert.</em>
-            </p>
+    <main>
 
-            <div class="controls">
-                <button id="startBtn">Audio Engine Starten</button>
+        <!-- ================= LESON 1: SINEWAVE MATH ================= -->
+        <div id="lesson1" class="lesson-container active grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l1">Die Sinuswelle</h1>
+                    <p class="subtitle">Mathematische Definition einer harmonischen Schwingung</p>
+                </header>
+                <div class="explanation b-l1">
+                    Eine Sinuswelle ist die fundamentalste Kurve in der Signalverarbeitung. Sie wird beschrieben durch die Formel:<br>
+                    <code class="math-block">x(t) = A · cos(ω · t + φ)</code>
+                </div>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l1">Parameter</h3>
+                <button id="btn-l1" class="toggle-btn" onclick="toggleAudio(1)">Start Engine</button>
+                <div class="control-group">
+                    <div class="slider-row"><label>Amplitude (A) <span id="l1-val-amp">0.8</span></label><input type="range" id="l1-amp" min="0" max="1" step="0.01" value="0.8"></div>
+                    <div class="slider-row"><label>Frequenz (f) <span id="l1-val-freq">440 Hz</span></label><input type="range" id="l1-freq" min="1" max="1000" step="1" value="440"></div>
+                    <div class="slider-row"><label>Phase (φ) <span id="l1-val-phase">0 rad</span></label><input type="range" id="l1-phase" min="0" max="6.283" step="0.01" value="0"></div>
+                </div>
+            </section>
+
+            <section class="panel">
+                <h3 class="c-l1">Plot (Zeitbereich)</h3>
+                <div class="canvas-wrapper"><canvas id="l1-canvas"></canvas></div>
+                <div class="control-group code-box">
+                    <div class="control-header"><span>Python Code Generator</span></div>
+                    <pre id="l1-python-code">import numpy as np...</pre>
+                </div>
+            </section>
+
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l1">Wissen & Hintergrund</h4>
+                    <p><strong>Die Formel:</strong> <code>x(t) = A · cos(ωt + φ)</code> beschreibt die Welle. <code>A</code> ist die Lautstärke, <code>ω</code> (Omega) die Rotationsgeschwindigkeit und <code>φ</code> der Startwinkel.</p>
+                    <p><strong>Frequenzumrechnung:</strong> In der Mathematik nutzen wir oft die Winkelfrequenz <code>ω</code> (Radiant/Sekunde). Um die physikalische Frequenz <code>f</code> (Hertz) zu erhalten, teilen wir durch den Umfang des Einheitskreises: <code>f = ω / 2π</code>.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 2: SIGNAL CHAIN ================= -->
+        <div id="lesson2" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l2">Die Audio-Signal-Kette</h1>
+                    <p class="subtitle">Vom analogen Signal zur digitalen Manipulation</p>
+                </header>
+                <div class="explanation b-l2">
+                    Ein Audiosignal durchläuft mehrere Prozessoren. Hier manipulieren wir ein obertonreiches Sägezahn-Signal.
+                </div>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l2">Effekt-Rack</h3>
+                <button id="btn-l2" class="toggle-btn" onclick="toggleAudio(2)">Start Engine</button>
+                <div class="control-group">
+                    <div class="control-header"><span>Filter (EQ)</span><select id="l2-filterType"><option value="lowpass">Tiefpass</option><option value="highpass">Hochpass</option><option value="bandpass">Bandpass</option></select></div>
+                    <div class="slider-row"><label>Frequenz</label><input type="range" id="l2-cutoff" min="50" max="5000" step="10" value="1000"></div>
+                    <div class="slider-row"><label>Resonanz</label><input type="range" id="l2-resonance" min="0" max="20" step="0.1" value="1"></div>
+                </div>
+                <div class="control-group"><div class="control-header"><span>Distortion</span></div><div class="slider-row"><label>Drive</label><input type="range" id="l2-drive" min="0" max="100" step="1" value="0"></div></div>
+                <div class="control-group"><div class="control-header"><span>Kompressor</span></div><div class="slider-row"><label>Threshold</label><input type="range" id="l2-threshold" min="-60" max="0" step="1" value="-24"></div><div class="slider-row"><label>Ratio</label><input type="range" id="l2-ratio" min="1" max="20" step="0.5" value="12"></div></div>
+            </section>
+            
+            <section class="panel">
+                <h3 class="c-l2">Oszilloskop</h3>
+                <div class="canvas-wrapper"><div class="canvas-label">INPUT</div><canvas id="l2-canvasInput"></canvas></div>
+                <div class="signal-flow-arrow">⬇ Processing ⬇</div>
+                <div class="canvas-wrapper"><div class="canvas-label">OUTPUT</div><canvas id="l2-canvasOutput"></canvas></div>
+            </section>
+
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l2">Wissen & Hintergrund</h4>
+                    <p><strong>Lineare Systeme (Filter):</strong> Ein Filter dämpft bestimmte Frequenzen, verändert aber nicht die Tonhöhe. Mathematisch gesehen ist dies eine <em>Faltung</em> (Convolution) des Signals mit der Impulsantwort des Filters.</p>
+                    <p><strong>Nicht-Lineare Systeme (Distortion):</strong> Verzerrung verändert die Wellenform direkt (Clipping) und fügt dadurch neue Obertöne hinzu, die vorher nicht da waren.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 3: ANALOG VS DIGITAL ================= -->
+        <div id="lesson3" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l3">Analog vs. Digital</h1>
+                    <p class="subtitle">Abtastrate und Quantisierung</p>
+                </header>
+                <div class="explanation b-l3">
+                    Computersignale sind nicht glatt, sondern treppenförmig. Wir simulieren A/D-Wandlung durch Reduktion der Auflösung.
+                </div>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l3">A/D Wandler</h3>
+                <button id="btn-l3" class="toggle-btn" onclick="toggleAudio(3)">Start Engine</button>
+                <div class="control-group"><div class="slider-row"><label>Frequenz</label><input type="range" id="l3-pitch" min="50" max="800" step="1" value="220"></div></div>
+                <div class="control-group"><div class="slider-row"><label>Sample Rate</label><input type="range" id="l3-samplerate" min="500" max="44100" step="100" value="44100"></div></div>
+                <div class="control-group"><div class="slider-row"><label>Bit Tiefe</label><input type="range" id="l3-bits" min="1" max="8" step="0.25" value="8"></div></div>
+            </section>
+            
+            <section class="panel">
+                <h3 class="c-l3">Visualisierung</h3>
+                <div class="canvas-wrapper"><div class="canvas-label">ANALOG</div><canvas id="l3-canvasAnalog"></canvas></div>
+                <div class="canvas-wrapper"><div class="canvas-label">DIGITAL</div><canvas id="l3-canvasDigital"></canvas></div>
+            </section>
+
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l3">Wissen & Hintergrund</h4>
+                    <p><strong>Nyquist-Theorem:</strong> Damit ein Signal perfekt rekonstruiert werden kann, muss die Abtastrate (Sampling Rate) mindestens doppelt so hoch sein wie die höchste Frequenz im Signal (<code>fs > 2·fmax</code>). Ist sie niedriger, entstehen Fehler ("Aliasing").</p>
+                    <p><strong>Quantisierungsrauschen:</strong> Die Bit-Tiefe bestimmt, wie genau die Amplitude gemessen wird. Rundungsfehler beim Digitalisieren hören wir als Rauschen oder Verzerrung.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 4: EULER ================= -->
+        <div id="lesson4" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l4">Euler & Einheitskreis</h1>
+                    <p class="subtitle">Das mathematische Herz</p>
+                </header>
+                <div class="explanation b-l4">
+                    Eulers Formel <code>e<sup>jφ</sup> = cos(φ) + j·sin(φ)</code> zeigt, dass eine Rotation im Einheitskreis (komplexe Ebene) eine Cosinus- und eine Sinus-Welle erzeugt.
+                </div>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l4">Einheitskreis</h3>
+                <button id="btn-l4" class="toggle-btn" onclick="toggleAudio(4)">Animation Starten</button>
+                <div class="control-group">
+                    <div class="slider-row"><label>Geschwindigkeit</label><input type="range" id="l4-speed" min="0.1" max="2.0" step="0.1" value="0.5"></div>
+                    <div class="slider-row"><label>Radius</label><input type="range" id="l4-radius" min="0.1" max="1.0" step="0.05" value="0.8"></div>
+                </div>
+                <div class="canvas-wrapper" style="height: 300px;"><div class="canvas-label">Komplexe Ebene</div><canvas id="l4-circleCanvas"></canvas></div>
+            </section>
+            
+            <section class="panel">
+                <h3 class="c-l4">Projektion</h3>
+                <div class="canvas-wrapper" style="height: 300px;"><div class="canvas-label">Real (Blau) & Imaginär (Grün)</div><canvas id="l4-waveCanvas"></canvas></div>
+            </section>
+
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l4">Wissen & Hintergrund</h4>
+                    <p><strong>Die Eulersche Formel:</strong> Sie ist der Schlüssel zur Fourier-Transformation. Sie erlaubt es uns, Schwingungen nicht als ein "Hin-und-Her", sondern als eine elegante Rotation im Kreis zu beschreiben.</p>
+                    <p><strong>Orthogonalität:</strong> Sinus (Imaginär) und Cosinus (Real) stehen im 90°-Winkel zueinander. Sie sind "orthogonal", das heißt, sie beeinflussen sich bei der Berechnung nicht gegenseitig. Das nutzt die FFT, um Frequenzen sauber zu trennen.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 5: COMPLEX SINES ================= -->
+        <div id="lesson5" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l5">Komplexe Sinuswellen</h1>
+                    <p class="subtitle">Vom Komplexen zum Realen Signal</p>
+                </header>
+                <div class="explanation b-l5">
+                    Wie wird aus imaginären Zahlen echter Sound? Durch die Summe zweier gegenläufiger Zeiger (konjugiert komplex).
+                </div>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l5">Konjugierte Zeiger</h3>
+                <button id="btn-l5" class="toggle-btn" onclick="toggleAudio(5)">Animation Starten</button>
+                <div class="control-group"><div class="slider-row"><label>Frequenz (ω)</label><input type="range" id="l5-speed" min="0.1" max="3.0" step="0.1" value="0.5"></div></div>
+                <div class="canvas-wrapper" style="height: 320px;"><div class="canvas-label">Komplexe Ebene</div><canvas id="l5-complexCanvas"></canvas></div>
+            </section>
+            
+            <section class="panel">
+                <h3 class="c-l5">Resultierende Welle</h3>
+                <div class="canvas-wrapper" style="height: 320px;"><div class="canvas-label">Zeitbereich (Realteil)</div><canvas id="l5-timeCanvas"></canvas></div>
+            </section>
+
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l5">Wissen & Hintergrund</h4>
+                    <p><strong>Negative Frequenzen:</strong> Der grüne Zeiger rotiert "rückwärts" (im Uhrzeigersinn). Das ist eine negative Frequenz. Physikalisch gibt es die nicht, aber mathematisch sind sie notwendig.</p>
+                    <p><strong>Auslöschung:</strong> Da die Zeiger immer spiegelbildlich sind, heben sich ihre vertikalen (imaginären) Anteile auf. Übrig bleibt nur die horizontale (reale) Bewegung – das ist der Ton, den wir hören.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 6: FOURIER SYNTHESIS ================= -->
+        <div id="lesson6" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l6">Inverse FFT & Synthese</h1>
+                    <p class="subtitle">Obertöne addieren</p>
+                </header>
+                <div class="explanation b-l6">
+                    Wir bauen einen Klang aus 8 Harmonischen. Dies ist der Beweis des Fourier-Theorems.
+                </div>
+            </div>
+            <section class="panel synthesis">
+                <h3 class="c-l6">Harmonische Reihe</h3>
+                <button id="btn-l6" class="toggle-btn" onclick="toggleAudio(6)">Start Engine</button>
+                <div class="control-group">
+                    <!-- Sliders populated by JS/HTML -->
+                    <div class="slider-row"><label>1. Grundton</label><input type="range" id="l6-osc1" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>2. Harmonische</label><input type="range" id="l6-osc2" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>3. Harmonische</label><input type="range" id="l6-osc3" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>4. Harmonische</label><input type="range" id="l6-osc4" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>5. Harmonische</label><input type="range" id="l6-osc5" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>6. Harmonische</label><input type="range" id="l6-osc6" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>7. Harmonische</label><input type="range" id="l6-osc7" min="0" max="1" step="0.01" value="0"></div>
+                    <div class="slider-row"><label>8. Harmonische</label><input type="range" id="l6-osc8" min="0" max="1" step="0.01" value="0"></div>
+                </div>
+            </section>
+            <section class="panel visualization">
+                <h3 class="c-l6">Analyse</h3>
+                <div class="canvas-wrapper"><canvas id="l6-timeCanvas"></canvas></div>
+                <div class="canvas-wrapper"><canvas id="l6-freqCanvas"></canvas></div>
+            </section>
+            
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l6">Wissen & Hintergrund</h4>
+                    <p><strong>Fourier-Theorem:</strong> Jean-Baptiste Joseph Fourier bewies, dass <em>jede</em> periodische Wellenform (egal wie komplex) durch eine Summe von einfachen Sinuswellen dargestellt werden kann.</p>
+                    <p><strong>IFFT (Inverse Fast Fourier Transform):</strong> Was wir hier tun – Sinuswellen zusammenmischen, um ein Signal zu bauen – ist genau das, was der IFFT-Algorithmus macht.</p>
+                </div>
+            </section>
+        </div>
+
+        <!-- ================= LESSON 7: SYNTHESIS LAB ================= -->
+        <div id="lesson7" class="lesson-container grid-layout">
+            <div class="panel full-width">
+                <header>
+                    <h1 class="c-l7">Synthese-Labor</h1>
+                    <p class="subtitle">Methoden der Klangerzeugung</p>
+                </header>
+            </div>
+            
+            <section class="panel">
+                <h3 class="c-l7">Steuerung</h3>
+                <button id="btn-l7" class="toggle-btn" onclick="toggleAudio(7)">Start Engine</button>
+                <div class="control-group">
+                    <select id="l7-synthType" onchange="updateL7UI()">
+                        <option value="subtractive">Subtraktiv</option>
+                        <option value="fm">FM</option>
+                        <option value="granular">Granular</option>
+                        <option value="additive">Additiv</option>
+                    </select>
+                </div>
                 
-                <div class="slider-group">
-                    <label>Grundton (Fundamental)</label>
-                    <input type="range" id="osc1" min="0" max="1" step="0.01" value="0">
+                <div id="ctrl-subtractive" class="synth-controls active-synth">
+                     <div class="slider-row"><label>Cutoff</label><input type="range" id="l7-sub-cutoff" min="100" max="5000" value="1000"></div>
+                     <div class="slider-row"><label>Resonanz</label><input type="range" id="l7-sub-res" min="0" max="20" step="0.1" value="5"></div>
                 </div>
-                <div class="slider-group">
-                    <label>2. Harmonische (Obertone)</label>
-                    <input type="range" id="osc2" min="0" max="1" step="0.01" value="0">
+                
+                <div id="ctrl-fm" class="synth-controls">
+                     <div class="slider-row"><label>Carrier</label><input type="range" id="l7-fm-carrier" min="100" max="800" value="220"></div>
+                     <div class="slider-row"><label>Ratio</label><input type="range" id="l7-fm-modfreq" min="0.5" max="10" step="0.1" value="2"></div>
+                     <div class="slider-row"><label>Depth</label><input type="range" id="l7-fm-depth" min="0" max="1000" value="300"></div>
                 </div>
-                <div class="slider-group">
-                    <label>3. Harmonische</label>
-                    <input type="range" id="osc3" min="0" max="1" step="0.01" value="0">
+                
+                <div id="ctrl-granular" class="synth-controls">
+                     <div class="slider-row"><label>Size</label><input type="range" id="l7-gran-size" min="0.01" max="0.5" step="0.01" value="0.1"></div>
+                     <div class="slider-row"><label>Density</label><input type="range" id="l7-gran-density" min="10" max="200" value="50"></div>
+                     <div class="slider-row"><label>Pos</label><input type="range" id="l7-gran-pos" min="0" max="1" step="0.01" value="0.5"></div>
+                     <div class="slider-row"><label>Jitter</label><input type="range" id="l7-gran-jitter" min="0" max="0.5" step="0.01" value="0.1"></div>
                 </div>
-                <div class="slider-group">
-                    <label>4. Harmonische</label>
-                    <input type="range" id="osc4" min="0" max="1" step="0.01" value="0">
+                
+                <div id="ctrl-additive" class="synth-controls">
+                     <div class="slider-row"><label>Low</label><input type="range" id="l7-add-low" min="0" max="1" step="0.01" value="0.8"></div>
+                     <div class="slider-row"><label>Mid</label><input type="range" id="l7-add-mid" min="0" max="1" step="0.01" value="0"></div>
+                     <div class="slider-row"><label>High</label><input type="range" id="l7-add-high" min="0" max="1" step="0.01" value="0"></div>
                 </div>
-            </div>
-        </section>
+            </section>
+            
+            <section class="panel">
+                <h3 class="c-l7">Output</h3>
+                <div class="canvas-wrapper"><canvas id="l7-canvas"></canvas></div>
+                <div class="canvas-wrapper"><canvas id="l7-canvasFreq"></canvas></div>
+            </section>
 
-        <section class="panel visualization">
-            <div class="canvas-container">
-                <h3>Time Domain (Zeitbereich)</h3>
-                <canvas id="timeCanvas"></canvas>
-                <p class="small-desc">Das Ergebnis der Summation. Dies ist, was der Lautsprecher abspielt.</p>
-            </div>
+            <section class="panel full-width didactic-panel">
+                <div class="didactic-content">
+                    <h4 class="c-l7">Wissen & Hintergrund</h4>
+                    <p><strong>Subtraktiv:</strong> Wie ein Bildhauer, der aus einem Steinblock (obertonreicher Sägezahn) eine Skulptur meißelt (Filter).</p>
+                    <p><strong>FM (Frequenzmodulation):</strong> Erzeugt komplexe metallische Klänge durch Modulation der Frequenz eines Oszillators mit einem anderen (Seitenbänder nach Bessel-Funktionen).</p>
+                    <p><strong>Granular:</strong> Zerhackt Sounds in tausende winzige "Grains". Die Basis für modernes Time-Stretching.</p>
+                </div>
+            </section>
+        </div>
 
-            <div class="canvas-container">
-                <h3>Frequency Domain (Frequenzbereich)</h3>
-                <canvas id="freqCanvas"></canvas>
-                <p class="small-desc">Die <strong>FFT</strong> analysiert das komplexe Signal und zerlegt es zurück in seine "Zutaten" (die Balken).</p>
-            </div>
-        </section>
-
-    </div>
+    </main>
 
     <footer>
-        <p>Developed for JKU Teaching Demonstration by Malte Mittrowann</p>
+        <p>Interactive Audio Learning Tool | JKU Demonstration</p>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- WICHTIG: Die Reihenfolge ist wichtig. Zuerst Helper/Main, dann die Lektionen. -->
+    <script src="main.js"></script>
+    <script src="l1_sine.js"></script>
+    <script src="l2_chain.js"></script>
+    <script src="l3_ad.js"></script>
+    <script src="l4_euler.js"></script>
+    <script src="l5_complex.js"></script>
+    <script src="l6_fourier.js"></script>
+    <script src="l7_synth.js"></script>
 </body>
 </html>
